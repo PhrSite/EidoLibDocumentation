@@ -1,0 +1,4 @@
+- name: Using the EIDO Classes
+  href: UsingTheEidoClasses.md
+- name: Class Generation Methods
+  href: ClassGenerationMethods.md
