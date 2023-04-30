@@ -105,15 +105,16 @@
             <article class="content wrap" id="_content" data-uid="">
 <h1 id="introduction">Introduction</h1>
 
-<p>The <a href="../api/Eido.EidoType.html">EidoType</a> class is the main class for an EIDO JSON document. The EIDO JSON schema named top level JSON document &quot;EmergencyIncidentDataObjectType&quot;. This name change was for convience only and has no impact on interoperability.</p>
+<p>The top level object in the EIDO JSON document schema is called the &quot;EmergencyIncidentDataObjectType&quot;. In the EidoLib class library, the <a href="../api/Eido.EidoType.html">EidoType</a> class is the main class for an EIDO JSON document. This name change was for convience only and has no impact on interoperability.</p>
+<p>The Eido namespace contains classes for all schemas defined in <a href="https://cdn.ymaws.com/www.nena.org/resource/resmgr/standards/nena-sta-021.1a_eido_json_20.pdf">NENA-STA-021.1a-2022</a>. The NiemTypes namespace contains the classes for the NIEM JSON schemas.</p>
 <h1 id="parsing-eido-json-documents">Parsing EIDO JSON Documents</h1>
 <h2 id="deserializing-eido-json-documents">Deserializing EIDO JSON Documents</h2>
-<p>The EidoHelper class has a method called FromString() that can be used to deserialize a string into an EidoType object. For example:</p>
+<p>The <a href="../api/Eido.EidoHelper.html">EidoHelper</a> class has a method called FromString() that can be used to deserialize a string into an EidoType object. For example:</p>
 <pre><code>EidoType eido = EidoHelper.FromString(strEido);
 </code></pre>
 <p>This function returns null if an exception occurs so be sure to check that the returned EidoType object is not null.</p>
-<p>It is important to note that the JSON schema for the EIDO uses property names that are actually reserved JSON keywords for metadata. For example, the ReferenceType has a property called &quot;$ref&quot;.</p>
-<p>If you try to deserialize an EIDO JSON document using the JsonConvert.DeserializeObject() method, an InvalidOperationException will be thrown unless you pass it a JsonSerializerSettings object with the MetadataPropertyHandling property set to MetadataPropertyHandling.Ignore. The EidoHelper.FromString() method handles this for you.</p>
+<p>It is important to note that the JSON schema for the EIDO uses property names that are actually reserved JSON keywords for metadata. For example, the ReferenceType class has a property called &quot;$ref&quot;.</p>
+<p>If you try to deserialize an EIDO JSON document using the JsonConvert.DeserializeObject() method (NewtonSoft.Json), an InvalidOperationException will be thrown unless you pass it a JsonSerializerSettings object with the MetadataPropertyHandling property set to MetadataPropertyHandling.Ignore. The EidoHelper.FromString() method handles this for you.</p>
 <h2 id="serializating-eidotype-objects">Serializating EidoType Objects</h2>
 <p>The EidoHelper class has a method called ToJsonString() that serizlizes an EidoType object to a JSON string. For example:</p>
 <pre><code>EidoType eido = new EidoType();
@@ -121,6 +122,296 @@
 string strEidoJson = EidoHelper.ToJsonString(eido);
 </code></pre>
 <p>The ToJsonString() method returns null if an exception occurs so be sure to test the return value for null.</p>
+<h1 id="extracting-data-from-an-eido">Extracting Data from an EIDO</h1>
+<p>An EIDO contains everything that a functional element knows about an incident at the time that it transmits the EIDO. An EIDO contains the following blocks of data. The Section and Title columns in the following table relate to <a href="https://cdn.ymaws.com/www.nena.org/resource/resmgr/standards/nena-sta-021.1a_eido_json_20.pdf">NENA-STA-021.1a-2022</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Title</th>
+<th>EidoType Field Name</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2.5</td>
+<td>Agent Data Component</td>
+<td>agentComponent</td>
+<td>List&lt;<a href="../api/Eido.AgentType.html">AgentType</a>&gt;</td>
+</tr>
+<tr>
+<td>2.6</td>
+<td>Agency Data Component</td>
+<td>agencyComponent</td>
+<td>List&lt;<a href="../api/Eido.AgencyType.html">AgencyType</a>&gt;</td>
+</tr>
+<tr>
+<td>2.7</td>
+<td>Split/Merge Data Component</td>
+<td>mergeComponent</td>
+<td>List&lt;<a href="../api/Eido.MergeInformationType.html">MergeInformationType</a>&gt;</td>
+</tr>
+<tr>
+<td>2.8</td>
+<td>Link Data Component</td>
+<td>linkComponent</td>
+<td>List&lt;<a href="../api/Eido.LinkInformationType.html">LinkInformationType</a>&gt;</td>
+</tr>
+<tr>
+<td>2.9</td>
+<td>Incident Data Component</td>
+<td>incidentComponent</td>
+<td><a href="../api/Eido.IncidentInformationType.html">IncidentInformationType</a></td>
+</tr>
+<tr>
+<td>2.10</td>
+<td>Call Data Component</td>
+<td>callComponent</td>
+<td>List&lt;<a href="../api/Eido.CallInformationType.html">CallInformationType</a>&gt;</td>
+</tr>
+<tr>
+<td>2.11</td>
+<td>Call Back Data Component</td>
+<td>callbackComponent</td>
+<td>List&lt;<a href="../api/Eido.CallbackType.html">CallbackType</a>&gt;</td>
+</tr>
+<tr>
+<td>2.12</td>
+<td>Updated Call Back Number Data Component</td>
+<td>callbackComponent.updatedCbn</td>
+<td><a href="../api/Eido.UpdatedCBNType.html">UpdatedCBNType</a></td>
+</tr>
+<tr>
+<td>2.13</td>
+<td>Dispatch Data Component</td>
+<td>dispatchComponent</td>
+<td>List&lt;<a href="../api/Eido.DispatchInformationType.html">DispatchInformationType</a>&gt;</td>
+</tr>
+<tr>
+<td>2.14</td>
+<td>Disposition Data Component</td>
+<td>incidentComponent.dispositionComponent</td>
+<td>List&lt;<a href="../api/Eido.DispositionType.html">DispositionType</a>&gt;</td>
+</tr>
+<tr>
+<td>2.15</td>
+<td>Notes Data Component</td>
+<td>notesComponent</td>
+<td>List&lt;<a href="../api/Eido.NotesType.html">NotesType</a>&gt;</td>
+</tr>
+<tr>
+<td>2.16</td>
+<td>Person Data Component</td>
+<td>personComponent</td>
+<td>List&lt;<a href="../api/Eido.PersonInformationType.html">PersonInformationType</a>&gt;</td>
+</tr>
+<tr>
+<td>2.17</td>
+<td>Vehicle Data Component</td>
+<td>vehicleComponent</td>
+<td>List&lt;<a href="../api/Eido.VehicleInformationType.html">VehicleInformationType</a>&gt;</td>
+</tr>
+<tr>
+<td>2.18</td>
+<td>Location Data Component</td>
+<td>locationComponent</td>
+<td>List&lt;<a href="../api/Eido.LocationInformationType.html">LocationInformationType</a>&gt;</td>
+</tr>
+<tr>
+<td>2.19</td>
+<td>Additional Data Component</td>
+<td>additionalDataComponent</td>
+<td>List&lt;<a href="../api/Eido.AdditionalDataType.html">AdditionalDataType</a>&gt;</td>
+</tr>
+<tr>
+<td>2.20</td>
+<td>Emergency Resource Data Component</td>
+<td>emergencyResourceComponent</td>
+<td>List&lt;<a href="../api/Eido.EmergencyResourceType.html">EmergencyResourceType</a>&gt;</td>
+</tr>
+<tr>
+<td>2.21</td>
+<td>Alarms and Sensors Data Component</td>
+<td>alarmsSensorsComponent</td>
+<td>List&lt;<a href="../api/Eido.AlarmsSensorsType.html">AlarmsSensorsType</a>&gt;</td>
+</tr>
+</tbody>
+</table>
+<p>The classes in the Eido and NiemTypes namespaces provide support for all of the data types for all components of an EIDO except the additionalDataComponent (AdditionalDataType)and the locationComponent (LocationInformationType). The AdditionalDataType class is a container for additional data in an XML format and the LocationInformationType is a container for location data in an XML data format. The EidoLib class library does not support the XML schemas for additional data and location data.</p>
+<p>The <a href="https://github.com/PhrSite/Ng911Lib">Ng911Lib</a> class library provides classes that can assist in extracting additional data and location data from an EIDO. The following sections provide examples of how to do this.</p>
+<h2 id="parsing-additional-data-in-an-eido">Parsing Additional Data in an EIDO</h2>
+<p>The following code sample shows how to use the classes from the Ng911Class library to get the additional data from an EIDO object when the additional data is passed by-value. This sample does not deal with the possibility that there is more than one instance of each type of additional data block. It also does not handle the associations between the additional data blocks and other components within the EIDO.</p>
+<pre><code>using Eido;
+using NiemTypes;
+using AdditionalData;
+using Ng911Lib.Utilities;
+using Pidf;
+
+namespace SomeNamespace;
+
+public void ProcessAdditionalData(EidoType eido, out CommentType Ct, out DeviceInfoType Dit, out ProviderInfoType Pit,
+ServiceInfoType Sit, SubscriberInfoType Sub)
+{
+    Ct = null;
+    Dit = null;
+    Pit = null;
+    Sit = null;
+    Sub = null;
+
+    if (eido.additionalDataComponent == null || eido.additionalDataComponent.Count == 0)
+        return;  // No additional data in the EIDO
+
+    foreach (AdditionalDataType Adt  in eido.additionalDataComponent)
+    {
+        if (Adt.additionalDataByValue != null)
+        {
+            string strType = GetAdditionalDataType(Adt.urlPurpose, Adt.additionalDataByValue);
+            // If strType is null, then handle the error
+
+            switch (strType)
+            {
+                case PurposeTypes.Comment:
+                    Ct = XmlHelper.DeserializeFromString&lt;CommentType&gt;(Adt.additionalDataByValue);
+                    // If the return value of DeserializeFromString is null then an error occurred.
+                    break;
+                case PurposeTypes.DeviceInfo:
+                    Pit = XmlHelper.DeserializeFromString&lt;ProviderInfoType&gt;(Adt.additionalDataByValue);
+                    break;
+                case PurposeTypes.ProviderInfo:
+                    ProviderInfoType Pit = XmlHelper.DeserializeFromString&lt;ProviderInfoType&gt;(Adt.additionalDataByValue);
+                    break;
+                case PurposeTypes.ServiceInfo:
+                    ServiceInfoType Sit = XmlHelper.DeserializeFromString&lt;ServiceInfoType&gt;(Adt.additionalDataByValue);
+                    break;
+                case PurposeTypes.SubscriberInfo:
+                    Sub = XmlHelper.DeserializeFromString&lt;SubscriberInfoType&gt;Adt.additionalDataByValue);
+                    break;
+            }
+        }
+        else if (string.IsNullOrEmpty(Adt.additionalDataByReferenceUrl) == false)
+        {
+            // TODO: De-reference the additionalDataByReferenceUrl to get the additional data by sending an HTTP GET
+            // request to the URL contained in the additionalDataByReference property.
+        }
+    }
+}
+</code></pre>
+<p>The urlPurpose property of the AdditionalDataType class identifies which type of additional data is being provided. This information is required in order to specify the class to deserialize the XML string into.</p>
+<p>When additional data is provided with a call, the SIP message will contain a Call-Info header that identifies the type of additional data being provided. For example:</p>
+<pre><code>Call-Info: &lt;cid:0123456789@atlanta.example.com&gt;;purpose=EmergencyCallData.DeviceInfo
+</code></pre>
+<p>In this case, the urlPurpose property will be set to the purpose parameter of the Call-Info header, which is EmergencyCallData.DeviceInfo.</p>
+<p>When additional data is received via SIP, the EIDO creator must set the urlPurpose to the purpose parameter from the SIP Call-Info header. According to <a href="https://cdn.ymaws.com/www.nena.org/resource/resmgr/standards/nena-sta-021.1a_eido_json_20.pdf">NENA-STA-021.1a-2022</a>, the EIDO creator may set the urlPurpose property but it is not required to if the additional data was not received via SIP.</p>
+<p>If the urlPurpose is null, then the EIDO consumer must test the XML string in order to determine the schema of the data being passed. The following code sample shows how this can be done.</p>
+<pre><code>private string GetAdditionalDataType(string strPurpose, string strAddDataXml)
+{
+    if (string.IsNullOrEmpty(strPurpose) == false)
+        return strPurpose;
+
+    string strType = null;
+    if (strAddDataXml.IndexOf(PurposeTypes.Comment) &gt;= 0)
+        strType = PurposeTypes.Comment;
+    else if (strAddDataXml.IndexOf(PurposeTypes.DeviceInfo) &gt;= 0)
+        strType = PurposeTypes.DeviceInfo;
+    else if (strAddDataXml.IndexOf(PurposeTypes.ProviderInfo) &gt;= 0)
+        strType = PurposeTypes.ProviderInfo;
+    else if (strAddDataXml.IndexOf(PurposeTypes.ServiceInfo) &gt;= 0)
+        strType = PurposeTypes.ServiceInfo;
+    else if (strAddDataXml.IndexOf(PurposeTypes.SubscriberInfo) &gt;= 0)
+        strType = PurposeTypes.SubscriberInfo;
+
+    return strType;
+}
+</code></pre>
+<h2 id="parsing-location-data-in-an-eido">Parsing Location Data in an EIDO</h2>
+<p>The locationComponent of an EidoType object contains an array of <a href="../api/Eido.LocationInformationType.html">LocationInformationType</a> objects. The LocationInformationType class contains many properties, but the following properties provide location information.</p>
+<ol>
+<li>locationByValue</li>
+<li>locationByReferenceUrl</li>
+<li>crossStreetByValue</li>
+<li>crossStreetByReferenceUrl</li>
+<li>intersectingStreetByValue</li>
+<li>intersectingStreetByReferenceUrl</li>
+</ol>
+<h3 id="location-by-value-and-location-by-reference">Location By-Value and Location By-Reference</h3>
+<p>The following code sample shows how to deserialize the location data from the locationByValue and locationByReferenceUrl properties of the LocationInformationType class.</p>
+<pre><code>using Ng911Lib.Utilities;
+using Pidf;
+
+...
+Presence pres1;
+Presence pres2;
+string strPres1 = eido.locationComponent?[0].locationByValue;
+if (string.IsNullOrEmpty(strPres1) == false)
+    pres1 = XmlHelper.DeserializeFromString&lt;Presence&gt;(strPres1)
+
+string strPresUrl = eido.locationComponent?[0].locationByReferenceUrl;
+if (string.IsNullOrEmpty(strPresUrl) == false)
+{
+	string strPres2 = // Dereference the URL in strPresUrl by doing an HTTP GET request. Convert the response to a string
+    if (string.IsNullOrEmpty(strPres2) == false)
+    	pres2 = XmlHelper.DeserializeFromString&lt;Presence&gt;(strPres2);
+}
+
+</code></pre>
+<h3 id="cross-street-location-information">Cross Street Location Information</h3>
+<p>The LocationInformationType class contains properties called crossStreetByValue and crossStreetByReferenceUrl. Both of these properies are arrays (actually List&lt;string&gt;) of string values. Each crossStreetByValue string property contains a PIDF-LO XML document containing a civic address representing a street address (or maybe just a street name) relative to the location information from the locationByValue or locationByReferenceUrl properties. The crossStreetByReferenceUrl contains a URL that can be de-referenced with an HTTP GET request to get the PIDF-LO XML document.</p>
+<p>Each array may contain one or two elements, one for each cross street.</p>
+<p>The following example shows how to parse and process the cross street by value information in a LocationInformationType object.</p>
+<pre><code>using Ng911Lib.Utilities;
+using Pidf;
+
+...
+public void GetCrossStreetsByValue(LocationInformationType lit, out string strCs1, out string strCs2)
+{
+	strCs1 = null;
+    strCs2 = null;
+
+    if (lit == null || lit.crossStreetByValue == null || lit.crossStreetByValue.Count &lt; 1)
+        return;
+
+	strCs1 = GetStreetAddress(Lit.crossStreetByValue[0]);
+	if (lit.crossStreetByValue.Count &gt;= 2)
+    	strCs2 = GetStreetAddress(Lit.crossStreetByValue[1]);
+}
+
+public string GetStreetAddress(string strPidf)
+{
+	Presence pres = XmlHelper.DeserializeFromString&lt;Presence&gt;(strPidf);
+    if (pres == null)
+    	return null;	// An error occurred
+
+	CivicAddress civicAddr = pres.GetFirstCivicAddress();
+    if (civicAddress == null)
+    	return null;	// Error: No civic address in the Presence object
+
+	return civicAddress.BuildFormattedStreetAddress();
+}
+
+</code></pre>
+<h3 id="intersecting-street-location-information">Intersecting Street Location Information</h3>
+<p>The LocationInformationType class contains properties called intersectingStreetByValue and intersectingStreetByReferenceUrl. Both of these properies are arrays (actually List&lt;string&gt;) of string values. Each intersectingStreetByValue string property contains a PIDF-LO XML document containing a civic address representing a street address (or maybe just a street name) relative to the location information from the locationByValue or locationByReferenceUrl properties. The intersectingStreetByReferenceUrl contains a URL that can be de-referenced with an HTTP GET request to get the PIDF-LO XML document.</p>
+<p>The string array may contain one or two elements, one for each intersecting street.</p>
+<p>The following example shows how to process intersecting street information by value in a LocationInformationType object.</p>
+<pre><code>using Ng911Lib.Utilities;
+using Pidf;
+
+...
+public void GetIntersectingStreetsByValue(LocationInformationType lit, out string strIs1, out string strIs2)
+{
+	strIs1 = null;
+    strIs2 = null;
+
+    if (lit == null || lit.intersectingStreetByValue == null || lit.intersectingStreetByValue.Count &lt; 1)
+        return;
+
+	strIs1 = GetStreetAddress(Lit.intersectingStreetByValue[0]);
+	if (lit.intersectingStreetByValue.Count &gt;= 2)
+    	strCs2 = GetStreetAddress(Lit.intersectingStreetByValue[1]);
+}
+</code></pre>
+<p>The GetStreetAddress() function is shown in the sample in the Cross Street Location Information section above.</p>
 <h1 id="eido-timestamps">EIDO Timestamps</h1>
 <p>All date-time objects in the EIDO must be formatted according to Section 2.3 of NENA-STA-010.3b. For example, “2022-08-21T12:58:03.01-07:00”.</p>
 <p>The EidoHelper class has the following two methods to handle this for you.</p>
